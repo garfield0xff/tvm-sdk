@@ -27,28 +27,52 @@ echo "Downloading TVM v${TVM_VERSION} from ${REPO_OWNER}/${REPO_NAME}"
 # Create download directory
 mkdir -p "${DOWNLOAD_DIR}"
 
-# Detect OS
-OS_TYPE=$(uname -s)
-case "${OS_TYPE}" in
-    Linux*)
-        PLATFORM="Linux"
-        BUILD_FILE="tvm-linux-x64.tar.gz"
-        ;;
-    Darwin*)
-        PLATFORM="macOS"
-        BUILD_FILE="tvm-macos-universal.tar.gz"
-        ;;
-    MINGW*|MSYS*|CYGWIN*)
-        PLATFORM="Windows"
-        BUILD_FILE="tvm-windows-x64.zip"
-        ;;
-    *)
-        echo "Error: Unsupported OS: ${OS_TYPE}"
-        exit 1
-        ;;
-esac
-
-echo "Detected platform: ${PLATFORM}"
+# Detect or override OS
+if [ -n "${TARGET_OS}" ]; then
+    # Use environment variable if set
+    case "${TARGET_OS}" in
+        linux|Linux|LINUX)
+            PLATFORM="Linux"
+            BUILD_FILE="tvm-linux-x64.tar.gz"
+            ;;
+        macos|macOS|darwin|Darwin)
+            PLATFORM="macOS"
+            BUILD_FILE="tvm-macos-universal.tar.gz"
+            ;;
+        windows|Windows|win|WIN)
+            PLATFORM="Windows"
+            BUILD_FILE="tvm-windows-x64.zip"
+            ;;
+        *)
+            echo "Error: Invalid TARGET_OS: ${TARGET_OS}"
+            echo "Valid options: linux, macos, windows"
+            exit 1
+            ;;
+    esac
+    echo "Target platform (override): ${PLATFORM}"
+else
+    # Auto-detect OS
+    OS_TYPE=$(uname -s)
+    case "${OS_TYPE}" in
+        Linux*)
+            PLATFORM="Linux"
+            BUILD_FILE="tvm-linux-x64.tar.gz"
+            ;;
+        Darwin*)
+            PLATFORM="macOS"
+            BUILD_FILE="tvm-macos-universal.tar.gz"
+            ;;
+        MINGW*|MSYS*|CYGWIN*)
+            PLATFORM="Windows"
+            BUILD_FILE="tvm-windows-x64.zip"
+            ;;
+        *)
+            echo "Error: Unsupported OS: ${OS_TYPE}"
+            exit 1
+            ;;
+    esac
+    echo "Detected platform: ${PLATFORM}"
+fi
 
 # GitHub Release URL
 BASE_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${RELEASE_TAG}"

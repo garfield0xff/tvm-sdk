@@ -36,11 +36,35 @@ Write-Host "Downloading TVM v$TVM_VERSION from $REPO_OWNER/$REPO_NAME"
 # Create download directory
 New-Item -ItemType Directory -Force -Path $DOWNLOAD_DIR | Out-Null
 
-# Detect platform (PowerShell is typically Windows, but check to be sure)
-$PLATFORM = "Windows"
-$BUILD_FILE = "tvm-windows-x64.zip"
-
-Write-Host "Detected platform: $PLATFORM"
+# Detect or override OS
+if ($env:TARGET_OS) {
+    # Use environment variable if set
+    switch ($env:TARGET_OS.ToLower()) {
+        { $_ -in "linux", "Linux", "LINUX" } {
+            $PLATFORM = "Linux"
+            $BUILD_FILE = "tvm-linux-x64.tar.gz"
+        }
+        { $_ -in "macos", "macOS", "darwin", "Darwin" } {
+            $PLATFORM = "macOS"
+            $BUILD_FILE = "tvm-macos-universal.tar.gz"
+        }
+        { $_ -in "windows", "Windows", "win", "WIN" } {
+            $PLATFORM = "Windows"
+            $BUILD_FILE = "tvm-windows-x64.zip"
+        }
+        default {
+            Write-Error "Error: Invalid TARGET_OS: $env:TARGET_OS"
+            Write-Host "Valid options: linux, macos, windows"
+            exit 1
+        }
+    }
+    Write-Host "Target platform (override): $PLATFORM"
+} else {
+    # Auto-detect (PowerShell typically runs on Windows)
+    $PLATFORM = "Windows"
+    $BUILD_FILE = "tvm-windows-x64.zip"
+    Write-Host "Detected platform: $PLATFORM"
+}
 
 # GitHub Release URL
 $BASE_URL = "https://github.com/$REPO_OWNER/$REPO_NAME/releases/download/$RELEASE_TAG"
