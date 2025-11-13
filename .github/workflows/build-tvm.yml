@@ -10,6 +10,9 @@ on:
 env:
   TVM_VERSION: "0.22.0"
 
+permissions:
+  contents: write
+
 concurrency:
   group: build-tvm-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
