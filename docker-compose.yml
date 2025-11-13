@@ -1,11 +1,11 @@
-version: '3.8'
-
 services:
   tvm-sdk:
+    image: tvm-sdk:latest
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: tvm-sdk-dev
+    container_name: tvm-docker-cpu
     volumes:
       - .:/workspace
       - pip-cache:/root/.cache/pip
