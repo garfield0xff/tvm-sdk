@@ -7,7 +7,10 @@ set -e
 # Configuration
 TVM_VERSION="${TVM_VERSION:-0.22.0}"
 RELEASE_TAG="tvm-v${TVM_VERSION}"
-DOWNLOAD_DIR="./dist"
+
+# Get project root directory (git root)
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+DOWNLOAD_DIR="${PROJECT_ROOT}/third_party/tvm"
 
 # Auto-detect repository from git remote
 REMOTE_URL=$(git config --get remote.origin.url 2>/dev/null || echo "")
@@ -24,25 +27,39 @@ echo "Downloading TVM v${TVM_VERSION} from ${REPO_OWNER}/${REPO_NAME}"
 # Create download directory
 mkdir -p "${DOWNLOAD_DIR}"
 
+# Detect OS
+OS_TYPE=$(uname -s)
+case "${OS_TYPE}" in
+    Linux*)
+        PLATFORM="Linux"
+        BUILD_FILE="tvm-linux-x64.tar.gz"
+        ;;
+    Darwin*)
+        PLATFORM="macOS"
+        BUILD_FILE="tvm-macos-universal.tar.gz"
+        ;;
+    MINGW*|MSYS*|CYGWIN*)
+        PLATFORM="Windows"
+        BUILD_FILE="tvm-windows-x64.zip"
+        ;;
+    *)
+        echo "Error: Unsupported OS: ${OS_TYPE}"
+        exit 1
+        ;;
+esac
+
+echo "Detected platform: ${PLATFORM}"
+
 # GitHub Release URL
 BASE_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${RELEASE_TAG}"
 
-# Download Windows build
-WINDOWS_FILE="tvm-windows-x64.zip"
-echo "Downloading ${WINDOWS_FILE}..."
-if curl -L -f -o "${DOWNLOAD_DIR}/${WINDOWS_FILE}" "${BASE_URL}/${WINDOWS_FILE}"; then
-    echo "✓ Windows build downloaded"
+# Download build for current platform
+echo "Downloading ${BUILD_FILE}..."
+if curl -L -f -o "${DOWNLOAD_DIR}/${BUILD_FILE}" "${BASE_URL}/${BUILD_FILE}"; then
+    echo "✓ ${PLATFORM} build downloaded"
 else
-    echo "⚠ Windows build not found"
-fi
-
-# Download macOS build
-MACOS_FILE="tvm-macos-universal.tar.gz"
-echo "Downloading ${MACOS_FILE}..."
-if curl -L -f -o "${DOWNLOAD_DIR}/${MACOS_FILE}" "${BASE_URL}/${MACOS_FILE}"; then
-    echo "✓ macOS build downloaded"
-else
-    echo "⚠ macOS build not found"
+    echo "✗ ${PLATFORM} build not found"
+    exit 1
 fi
 
 echo ""
