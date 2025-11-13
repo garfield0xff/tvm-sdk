@@ -8,13 +8,13 @@ services:
     container_name: tvm-sdk-dev
     volumes:
       - .:/workspace
-      - tvm-cache:/root/.cache
+      - pip-cache:/root/.cache/pip
     environment:
       - TVM_VERSION=0.22.0
+      - LLVM_CONFIG=/usr/bin/llvm-config
     working_dir: /workspace
     stdin_open: true
     tty: true
-    command: /bin/bash
 
 volumes:
-  tvm-cache:
+  pip-cache:
