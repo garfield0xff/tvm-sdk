@@ -46,4 +46,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib/python3.9/site-packages/tvm
 # Set Python path to ensure TVM is found
 ENV PYTHONPATH=/usr/local/lib/python3.9/site-packages:$PYTHONPATH
 
+# Set TVM SDK Python path for custom modules
+ENV TVM_SDK_PYTHON_PATH=/workspace/python
+
 CMD ["/bin/bash"]

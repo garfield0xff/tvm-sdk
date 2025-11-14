@@ -30,8 +30,14 @@ include_directories(
 
 # Source files
 set(BRIDGE_SOURCES
-    src/bridge/python_bridge.cpp
+    src/python_hook.cpp
+    src/ffi/numpy_ffi.cpp
+    src/ffi/tvm_ffi.cpp
 )
+
+# Define Python path for the project
+set(TVM_SDK_PYTHON_PATH "${CMAKE_SOURCE_DIR}/python")
+message(STATUS "TVM SDK Python path: ${TVM_SDK_PYTHON_PATH}")
 
 # Create library
 add_library(tvm_sdk_bridge STATIC ${BRIDGE_SOURCES})
@@ -42,6 +48,9 @@ target_include_directories(tvm_sdk_bridge PUBLIC
 )
 target_link_libraries(tvm_sdk_bridge PUBLIC
     ${Python3_LIBRARIES}
+)
+target_compile_definitions(tvm_sdk_bridge PRIVATE
+    TVM_SDK_PYTHON_PATH="${TVM_SDK_PYTHON_PATH}"
 )
 
 # Set compile options
