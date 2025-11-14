@@ -14,7 +14,7 @@ try {
     $PROJECT_ROOT = Get-Location
 }
 
-$DOWNLOAD_DIR = Join-Path $PROJECT_ROOT "third_party\tvm"
+$DOWNLOAD_DIR = Join-Path $PROJECT_ROOT "whl\tvm"
 
 # Auto-detect repository from git remote
 try {

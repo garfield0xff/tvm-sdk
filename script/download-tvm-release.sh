@@ -10,7 +10,7 @@ RELEASE_TAG="tvm-v${TVM_VERSION}"
 
 # Get project root directory (git root)
 PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-DOWNLOAD_DIR="${PROJECT_ROOT}/third_party/tvm"
+DOWNLOAD_DIR="${PROJECT_ROOT}/whl/tvm"
 
 # Auto-detect repository from git remote
 REMOTE_URL=$(git config --get remote.origin.url 2>/dev/null || echo "")

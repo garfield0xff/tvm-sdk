@@ -6,12 +6,14 @@ WORKDIR /workspace
 # Install system dependencies and LLVM 21
 RUN apt-get update && apt-get install -y \
     build-essential \
+    cmake \
     git \
     curl \
     wget \
     gnupg \
     lsb-release \
     ninja-build \
+    python3-dev \
     && wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc \
     && echo "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-21 main" > /etc/apt/sources.list.d/llvm.list \
     && apt-get update \
@@ -32,13 +34,16 @@ RUN pip install --no-cache-dir \
 COPY . /workspace
 
 # Download and extract Linux TVM wheel if exists
-RUN if [ -f "third_party/tvm/tvm-linux-x64.tar.gz" ]; then \
-        mkdir -p third_party/tvm/linux && \
-        tar -xzf third_party/tvm/tvm-linux-x64.tar.gz -C third_party/tvm/linux && \
-        pip install third_party/tvm/linux/*.whl; \
+RUN if [ -f "whl/tvm/tvm-linux-x64.tar.gz" ]; then \
+        mkdir -p whl/tvm/linux && \
+        tar -xzf whl/tvm/tvm-linux-x64.tar.gz -C whl/tvm/linux && \
+        pip install whl/tvm/linux/*.whl; \
     fi
 
 # Add TVM libraries to LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH=/usr/local/lib/python3.9/site-packages/tvm
+
+# Set Python path to ensure TVM is found
+ENV PYTHONPATH=/usr/local/lib/python3.9/site-packages:$PYTHONPATH
 
 CMD ["/bin/bash"]

@@ -1,42 +1,43 @@
 #!/bin/bash
-
-# Setup and run TVM SDK Docker environment
-
 set -e
 
-echo "Setting up TVM SDK Docker environment..."
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m' 
 
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo "Error: Docker is not installed"
-    echo "Please install Docker from https://www.docker.com/get-started"
-    exit 1
-fi
+# Project Root Directory
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+cd "$PROJECT_ROOT"
 
-# Check if docker-compose is available
-if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null 2>&1; then
-    echo "Error: docker-compose is not available"
-    echo "Please install docker-compose"
-    exit 1
-fi
+echo -e "${BLUE}========================================${NC}"
+echo -e "${BLUE}TVM SDK Docker Setup${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
 
-# Use 'docker compose' or 'docker-compose' depending on availability
-DOCKER_COMPOSE="docker compose"
-if ! docker compose version &> /dev/null 2>&1; then
-    DOCKER_COMPOSE="docker-compose"
-fi
-
-echo "Building Docker image..."
-$DOCKER_COMPOSE build
+# Build Docker IMG
+echo -e "${YELLOW}Building Docker image...${NC}"
+docker-compose build
 
 echo ""
-echo "Docker environment ready!"
+echo -e "${GREEN}========================================${NC}"
+echo -e "${GREEN}✓ Docker image built successfully!${NC}"
+echo -e "${GREEN}========================================${NC}"
 echo ""
-echo "Usage:"
-echo "  Start container:    $DOCKER_COMPOSE up -d"
-echo "  Enter container:    $DOCKER_COMPOSE exec tvm-sdk /bin/bash"
-echo "  Run command:        $DOCKER_COMPOSE run --rm tvm-sdk python your_script.py"
-echo "  Stop container:     $DOCKER_COMPOSE down"
+echo "To enter the container:"
+echo -e "  ${BLUE}docker-compose run --rm tvm-sdk bash${NC}"
 echo ""
-echo "To download TVM wheels inside container:"
-echo "  $DOCKER_COMPOSE run --rm tvm-sdk ./script/download-tvm-release.sh"
+echo "Inside the container, you can:"
+echo -e "  ${BLUE}# Build the project${NC}"
+echo "  mkdir -p build && cd build"
+echo "  cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON"
+echo "  cmake --build . -j\$(nproc)"
+echo ""
+echo -e "  ${BLUE}# Run examples${NC}"
+echo "  ./examples/simple_tvm_import"
+echo "  ./examples/tvm_version_example"
+echo ""
+echo -e "  ${BLUE}# Or install and run${NC}"
+echo "  cmake --install . --prefix /usr/local"
+echo "  /usr/local/bin/simple_tvm_import"
