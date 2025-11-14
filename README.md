@@ -27,4 +27,13 @@ cd tvm-sdk
 .\script\setup-docker.ps1
 ```
 
+### 3. Test TVM installation
+
+```bash
+# Start container
+docker-compose up -d
+
+# Run TVM test
+docker-compose exec tvm-sdk python3 test/tvm/tvm-test.py
+```
 
