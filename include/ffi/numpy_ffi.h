@@ -75,6 +75,10 @@ public:
      */
     template<typename T>
     static py::array_t<T> vector_to_numpy(const std::vector<T>& vec) {
+        // Ensure Python is initialized before creating numpy arrays
+        if (!PythonHook::is_initialized()) {
+            PythonHook::initialize();
+        }
         return py::array_t<T>(vec.size(), vec.data());
     }
 
@@ -86,6 +90,11 @@ public:
      */
     template<typename T>
     static py::array_t<T> vector2d_to_numpy(const std::vector<std::vector<T>>& vec) {
+        // Ensure Python is initialized before creating numpy arrays
+        if (!PythonHook::is_initialized()) {
+            PythonHook::initialize();
+        }
+
         if (vec.empty()) {
             return py::array_t<T>();
         }
@@ -114,6 +123,10 @@ public:
      */
     template<typename T>
     static std::vector<T> numpy_to_vector(const py::array_t<T>& arr) {
+        // Ensure Python is initialized before accessing numpy arrays
+        if (!PythonHook::is_initialized()) {
+            PythonHook::initialize();
+        }
         auto buf = arr.request();
         T* ptr = static_cast<T*>(buf.ptr);
         return std::vector<T>(ptr, ptr + buf.size);

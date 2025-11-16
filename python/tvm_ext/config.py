@@ -1,20 +1,10 @@
 """
-TVM Sample Functions for C++ Integration
+TVM Configuration and IR Functions
 """
 
 import tvm
 from tvm import relax
 from tvm.script import tir as T
-
-
-def get_tvm_version():
-    """
-    Get TVM version string.
-
-    Returns:
-        str: TVM version
-    """
-    return tvm.__version__
 
 
 def get_tvm_target(target_name="llvm"):
@@ -118,15 +108,11 @@ def get_tvm_build_config():
 
 
 if __name__ == "__main__":
-    print("=== TVM Sample Functions Test ===\n")
-
-    # Test get_tvm_version
-    version = get_tvm_version()
-    print(f"TVM Version: {version}")
+    print("=== TVM Configuration Test ===\n")
 
     # Test get_tvm_target
     target_info = get_tvm_target("llvm")
-    print(f"\nTarget Info: {target_info}")
+    print(f"Target Info: {target_info}")
 
     # Test check_tvm_modules
     modules = check_tvm_modules()
