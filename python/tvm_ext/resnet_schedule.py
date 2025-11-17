@@ -169,7 +169,7 @@ def tune_resnet18_with_metaschedule(
 
             builder = LocalBuilder(max_workers=max_workers)
 
-            with target:
+            with target, PassContext(opt_level=opt_level):
                 ms.tune_tir(
                     mod=relax_mod,
                     target=target,

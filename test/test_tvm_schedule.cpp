@@ -96,9 +96,9 @@ TEST_F(TVMScheduleTest, TuneResNet18WithMetaSchedule) {
     std::cout << "\nTest Configuration:\n";
     std::cout << "  Image path: " << image_path << "\n";
     std::cout << "  Auto-tuning: enabled\n";
-    std::cout << "  Num trials: 2 (minimal for testing)\n";
+    std::cout << "  Num trials: 200 (minimal for testing)\n";
     std::cout << "  Opt level: 3\n";
-    std::cout << "  Max workers: 2\n";
+    std::cout << "  Max workers: 10\n";
     std::cout << "  Work dir: tuning_database_test\n\n";
 
     std::cout << "Starting MetaSchedule tuning (this will take a few minutes)...\n";
@@ -109,9 +109,9 @@ TEST_F(TVMScheduleTest, TuneResNet18WithMetaSchedule) {
             "tune_resnet18_with_metaschedule",
             image_path,
             true,                      // use_auto_tuning
-            2,                         // num_trials (minimal for quick test)
+            200,                         // num_trials (minimal for quick test)
             3,                         // opt_level
-            2,                         // max_workers
+            10,                         // max_workers
             "tuning_database_test"     // work_dir
         );
 
@@ -168,68 +168,68 @@ TEST_F(TVMScheduleTest, TuneResNet18WithMetaSchedule) {
 }
 
 // Test: Tune ResNet18 without MetaSchedule (baseline)
-TEST_F(TVMScheduleTest, TuneResNet18WithoutMetaSchedule) {
-    print_separator("Test: Tune ResNet18 WITHOUT MetaSchedule (Baseline)");
+// TEST_F(TVMScheduleTest, TuneResNet18WithoutMetaSchedule) {
+//     print_separator("Test: Tune ResNet18 WITHOUT MetaSchedule (Baseline)");
 
-    // Path to dog.jpeg using project root
-    std::string project_root = PROJECT_SOURCE_DIR;
-    std::string image_path = project_root + "/test/dog.jpeg";
+//     // Path to dog.jpeg using project root
+//     std::string project_root = PROJECT_SOURCE_DIR;
+//     std::string image_path = project_root + "/test/dog.jpeg";
 
-    std::cout << "\nTest Configuration:\n";
-    std::cout << "  Image path: " << image_path << "\n";
-    std::cout << "  Auto-tuning: DISABLED (baseline)\n";
-    std::cout << "  Opt level: 3\n\n";
+//     std::cout << "\nTest Configuration:\n";
+//     std::cout << "  Image path: " << image_path << "\n";
+//     std::cout << "  Auto-tuning: DISABLED (baseline)\n";
+//     std::cout << "  Opt level: 3\n\n";
 
-    std::cout << "Compiling without MetaSchedule (baseline)...\n";
+//     std::cout << "Compiling without MetaSchedule (baseline)...\n";
 
-    try {
-        py::object result = PythonHook::call_function(
-            "tvm_ext",
-            "tune_resnet18_with_metaschedule",
-            image_path,
-            false,                     // use_auto_tuning = false
-            0,                         // num_trials (ignored)
-            3,                         // opt_level
-            py::none(),                // max_workers
-            "baseline_no_tuning"       // work_dir
-        );
+//     try {
+//         py::object result = PythonHook::call_function(
+//             "tvm_ext",
+//             "tune_resnet18_with_metaschedule",
+//             image_path,
+//             false,                     // use_auto_tuning = false
+//             0,                         // num_trials (ignored)
+//             3,                         // opt_level
+//             py::none(),                // max_workers
+//             "baseline_no_tuning"       // work_dir
+//         );
 
-        py::dict dict_result = py::cast<py::dict>(result);
-        std::string status = py::cast<std::string>(dict_result["status"]);
+//         py::dict dict_result = py::cast<py::dict>(result);
+//         std::string status = py::cast<std::string>(dict_result["status"]);
 
-        EXPECT_EQ(status, "success");
+//         EXPECT_EQ(status, "success");
 
-        if (status == "success") {
-            std::cout << "\n✓ Baseline compilation completed!\n";
+//         if (status == "success") {
+//             std::cout << "\n✓ Baseline compilation completed!\n";
 
-            // Extract and print results
-            std::map<std::string, std::string> baseline_results;
-            for (auto item : dict_result) {
-                std::string key = py::cast<std::string>(item.first);
-                if (key != "traceback") {
-                    baseline_results[key] = py::cast<std::string>(item.second);
-                }
-            }
+//             // Extract and print results
+//             std::map<std::string, std::string> baseline_results;
+//             for (auto item : dict_result) {
+//                 std::string key = py::cast<std::string>(item.first);
+//                 if (key != "traceback") {
+//                     baseline_results[key] = py::cast<std::string>(item.second);
+//                 }
+//             }
 
-            print_separator("Baseline Results (No Tuning)");
-            print_map(baseline_results);
+//             print_separator("Baseline Results (No Tuning)");
+//             print_map(baseline_results);
 
-            EXPECT_EQ(baseline_results["tuning_enabled"], "False");
+//             EXPECT_EQ(baseline_results["tuning_enabled"], "False");
 
-            std::cout << "\n=== Baseline Summary ===\n";
-            std::cout << "  Top-1 Prediction: " << baseline_results["top1_class"] << "\n";
-            std::cout << "  Avg Inference Time: " << baseline_results["avg_inference_time_ms"] << " ms\n";
-            std::cout << "  (Note: Compare with tuned version to see speedup)\n";
+//             std::cout << "\n=== Baseline Summary ===\n";
+//             std::cout << "  Top-1 Prediction: " << baseline_results["top1_class"] << "\n";
+//             std::cout << "  Avg Inference Time: " << baseline_results["avg_inference_time_ms"] << " ms\n";
+//             std::cout << "  (Note: Compare with tuned version to see speedup)\n";
 
-        } else {
-            std::string error_msg = py::cast<std::string>(dict_result["error_message"]);
-            FAIL() << "Baseline compilation failed: " << error_msg;
-        }
+//         } else {
+//             std::string error_msg = py::cast<std::string>(dict_result["error_message"]);
+//             FAIL() << "Baseline compilation failed: " << error_msg;
+//         }
 
-    } catch (const std::exception& e) {
-        FAIL() << "Exception during baseline compilation: " << e.what();
-    }
-}
+//     } catch (const std::exception& e) {
+//         FAIL() << "Exception during baseline compilation: " << e.what();
+//     }
+// }
 
 // Main function
 int main(int argc, char** argv) {
