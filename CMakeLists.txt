@@ -33,6 +33,7 @@ set(BRIDGE_SOURCES
     src/python_hook.cpp
     src/ffi/numpy_ffi.cpp
     src/ffi/tvm_ffi.cpp
+    src/ffi/torch_ffi.cpp
 )
 
 # Define Python path for the project

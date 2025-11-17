@@ -102,7 +102,7 @@ public:
     );
 
 private:
-    static constexpr const char* MODULE_PATH = "tvm_ext.ffi_entry";
+    static constexpr const char* MODULE_PATH = "tvm_ext";
 };
 
 } // namespace ffi

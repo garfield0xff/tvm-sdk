@@ -88,28 +88,20 @@ def get_tvm_build_config():
 
     # LLVM support
     try:
-        config["llvm"] = tvm.target.Target("llvm").check_available()
+        config["llvm"] = tvm.runtime.enabled("llvm")
     except:
         config["llvm"] = False
 
     # CUDA support
     try:
-        config["cuda"] = tvm.target.Target("cuda").check_available()
+        config["cuda"] = tvm.runtime.enabled("cuda")
     except:
         config["cuda"] = False
-
-    # Metal support (macOS)
-    try:
-        config["metal"] = tvm.target.Target("metal").check_available()
-    except:
-        config["metal"] = False
 
     return config
 
 
 if __name__ == "__main__":
-    print("=== TVM Configuration Test ===\n")
-
     # Test get_tvm_target
     target_info = get_tvm_target("llvm")
     print(f"Target Info: {target_info}")

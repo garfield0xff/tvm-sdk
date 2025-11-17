@@ -28,20 +28,6 @@ void print_map(const std::map<std::string, std::string>& map_data, const std::st
     }
 }
 
-/**
- * @brief Create a simple Relax IR for testing MetaSchedule
- * @return Relax module IR string
- */
-std::string create_test_relax_ir() {
-    // This is a simple example IR - in real usage, you would import a model
-    // For this demo, we'll use Python to create a simple IR
-    py::object result = PythonHook::call_function(
-        "tvm_ext.ffi_entry",
-        "create_simple_ir"
-    );
-    return PythonHook::to_cpp<std::string>(result);
-}
-
 int main() {
     try {
         print_separator("TVM MetaSchedule Test Suite");
@@ -62,14 +48,8 @@ int main() {
         auto db_info = TVMFFI::check_tuning_database(work_dir);
         print_map(db_info);
 
-        // Test 3: Get TVM version and build config
-        std::cout << "\n[Test 3] TVM Build Configuration\n";
-        std::cout << "--------------------------------\n";
-        std::string version = TVMFFI::get_tvm_version();
-        std::cout << "  TVM Version: " << version << "\n\n";
-
-        // Test 4: Create simple Relax IR for testing
-        std::cout << "\n[Test 4] Create Simple Relax IR\n";
+        // Test 3: Create simple Relax IR for testing
+        std::cout << "\n[Test 3] Create Simple Relax IR\n";
         std::cout << "-------------------------------\n";
         std::cout << "Creating a simple matrix multiplication Relax IR...\n";
 
@@ -84,8 +64,8 @@ int main() {
             relax_ir = "";
         }
 
-        // Test 5: Actual MetaSchedule Tuning Test
-        std::cout << "\n[Test 5] MetaSchedule Tuning Test\n";
+        // Test 4: Actual MetaSchedule Tuning Test
+        std::cout << "\n[Test 4] MetaSchedule Tuning Test\n";
         std::cout << "---------------------------------\n";
 
         if (!relax_ir.empty()) {
@@ -119,8 +99,8 @@ int main() {
                 std::cerr << "\n✗ Exception during tuning: " << e.what() << "\n";
             }
 
-            // Test 6: Check tuning database after tuning
-            std::cout << "\n[Test 6] Check Tuning Database (After Tuning)\n";
+            // Test 5: Check tuning database after tuning
+            std::cout << "\n[Test 5] Check Tuning Database (After Tuning)\n";
             std::cout << "--------------------------------------------\n";
             auto db_info_after = TVMFFI::check_tuning_database(work_dir);
             print_map(db_info_after);

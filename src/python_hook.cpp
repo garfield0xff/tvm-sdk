@@ -89,26 +89,6 @@ py::object PythonHook::import_module(const std::string& module_name) {
     }
 }
 
-py::object PythonHook::call_function(
-    const std::string& module_name,
-    const std::string& function_name
-) {
-    initialize();
-
-    try {
-        py::gil_scoped_acquire gil;
-
-        py::object module = import_module(module_name);
-        py::object func = module.attr(function_name.c_str());
-        return func();
-
-    } catch (const py::error_already_set& e) {
-        throw std::runtime_error(
-            std::string("Failed to call ") + module_name + "." + function_name + ": " + e.what()
-        );
-    }
-}
-
 py::object PythonHook::get_module_attr(
     const std::string& module_name,
     const std::string& attr_name

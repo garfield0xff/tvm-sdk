@@ -27,7 +27,7 @@ protected:
 TEST_F(TVMFFITest, GetTVMVersion) {
     std::string version = TVMFFI::get_tvm_version();
     EXPECT_THAT(version, Not(IsEmpty()));
-    std::cout << "TVM Version: " << version << std::endl;
+    std::cout << "version: " << version << std::endl;
 }
 
 // Test: create_simple_ir should return IR string
@@ -35,7 +35,6 @@ TEST_F(TVMFFITest, CreateSimpleIR) {
     py::object result = PythonHook::call_function("tvm_ext.ffi_entry", "create_simple_ir");
     std::string ir = PythonHook::to_cpp<std::string>(result);
     EXPECT_THAT(ir, Not(IsEmpty()));
-    std::cout << "Simple IR:\n" << ir << std::endl;
 }
 
 // Test: get_tvm_build_config should return build configuration
@@ -52,8 +51,6 @@ TEST_F(TVMFFITest, GetTVMBuildConfig) {
 
     EXPECT_THAT(config, Not(IsEmpty()));
 
-    // Print build config
-    std::cout << "TVM Build Config:" << std::endl;
     for (const auto& [target, available] : config) {
         std::cout << "  " << target << ": " << (available ? "enabled" : "disabled") << std::endl;
     }
@@ -64,5 +61,4 @@ TEST_F(TVMFFITest, CreateSimpleRelaxIR) {
     py::object result = PythonHook::call_function("tvm_ext.ffi_entry", "create_simple_relax_ir");
     std::string relax_ir = PythonHook::to_cpp<std::string>(result);
     EXPECT_THAT(relax_ir, Not(IsEmpty()));
-    std::cout << "Simple Relax IR:\n" << relax_ir << std::endl;
 }

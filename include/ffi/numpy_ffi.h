@@ -133,7 +133,7 @@ public:
     }
 
 private:
-    static constexpr const char* MODULE_NAME = "numpy_ext.numpy_samples";
+    static constexpr const char* MODULE_NAME = "numpy_ext";
 };
 
 } // namespace ffi

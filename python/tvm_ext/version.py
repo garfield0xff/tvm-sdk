@@ -16,6 +16,5 @@ def get_tvm_version():
 
 
 if __name__ == "__main__":
-    print("=== TVM Version Info ===\n")
     version = get_tvm_version()
-    print(f"TVM Version: {version}")
+    print(f"version: {version}")

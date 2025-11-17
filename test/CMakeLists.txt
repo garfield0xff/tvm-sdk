@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 
+# Define project directory for test execution
+set(PROJECT_DIRECTORY ${CMAKE_SOURCE_DIR})
+
 # Enable testing
 enable_testing()
 
@@ -51,7 +54,9 @@ target_compile_definitions(test_tvm_ffi PRIVATE
 
 # Add test to CTest
 include(GoogleTest)
-gtest_discover_tests(test_tvm_ffi)
+gtest_discover_tests(test_tvm_ffi
+    WORKING_DIRECTORY ${PROJECT_DIRECTORY}
+)
 
 # NumPy FFI Test executable
 add_executable(test_numpy_ffi
@@ -81,12 +86,80 @@ target_compile_definitions(test_numpy_ffi PRIVATE
 )
 
 # Add test to CTest
-gtest_discover_tests(test_numpy_ffi)
+gtest_discover_tests(test_numpy_ffi
+    WORKING_DIRECTORY ${PROJECT_DIRECTORY}
+)
+
+# Torch FFI Test executable
+add_executable(test_torch_ffi
+    test_torch_ffi.cpp
+)
+
+# Link libraries
+target_link_libraries(test_torch_ffi
+    PRIVATE
+    gtest_main
+    gmock_main
+    tvm_sdk_bridge
+    ${Python3_LIBRARIES}
+)
+
+# Set compile options
+target_compile_options(test_torch_ffi PRIVATE
+    -Wall
+    -Wextra
+    $<$<CONFIG:Debug>:-g -O0>
+    $<$<CONFIG:Release>:-O3>
+)
+
+# Pass Python path and project directory to test
+target_compile_definitions(test_torch_ffi PRIVATE
+    TVM_SDK_PYTHON_PATH="${TVM_SDK_PYTHON_PATH}"
+    PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+)
+
+# Add test to CTest
+gtest_discover_tests(test_torch_ffi
+    WORKING_DIRECTORY ${PROJECT_DIRECTORY}
+)
+
+# TVM Schedule Test executable
+add_executable(test_tvm_schedule
+    test_tvm_schedule.cpp
+)
+
+# Link libraries
+target_link_libraries(test_tvm_schedule
+    PRIVATE
+    gtest_main
+    gmock_main
+    tvm_sdk_bridge
+    ${Python3_LIBRARIES}
+)
+
+# Set compile options
+target_compile_options(test_tvm_schedule PRIVATE
+    -Wall
+    -Wextra
+    $<$<CONFIG:Debug>:-g -O0>
+    $<$<CONFIG:Release>:-O3>
+)
+
+# Pass Python path and project directory to test
+target_compile_definitions(test_tvm_schedule PRIVATE
+    TVM_SDK_PYTHON_PATH="${TVM_SDK_PYTHON_PATH}"
+    PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+)
+
+# Add test to CTest
+gtest_discover_tests(test_tvm_schedule
+    WORKING_DIRECTORY ${PROJECT_DIRECTORY}
+)
 
 # Custom test target for easier execution
 add_custom_target(run_tests
-    COMMAND test_tvm_ffi && test_numpy_ffi
-    DEPENDS test_tvm_ffi test_numpy_ffi
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMAND test_tvm_ffi && test_numpy_ffi && test_torch_ffi && test_tvm_schedule
+    DEPENDS test_tvm_ffi test_numpy_ffi test_torch_ffi test_tvm_schedule
+    WORKING_DIRECTORY ${PROJECT_DIRECTORY}
     COMMENT "Running all tests..."
 )

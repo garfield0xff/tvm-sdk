@@ -26,6 +26,7 @@ ENV LD_LIBRARY_PATH=/usr/lib/llvm-21/lib:$LD_LIBRARY_PATH
 
 # Install Python dependencies
 RUN pip install --no-cache-dir \
+    xgboost \
     numpy \
     torch \
     torchvision

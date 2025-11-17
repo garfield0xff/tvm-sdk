@@ -10,17 +10,13 @@ namespace tvm_sdk {
 
 /**
  * @brief Python Runtime and Object Management
- *
- * Manages Python interpreter lifecycle, module imports,
- * and provides low-level Python object manipulation.
  */
 class PythonHook {
 public:
     /**
-     * @brief Initialize Python interpreter and add Python script path
+     * @brief Initialize Python interpreter
      *
      * Uses TVM_SDK_PYTHON_PATH environment variable to locate Python scripts.
-     * If not set, no path will be added to sys.path.
      */
     static void initialize();
 
@@ -35,7 +31,7 @@ public:
     static bool is_initialized();
 
     /**
-     * @brief Add a path to Python sys.path
+     * @brief Add a path to python script to sys.path
      * @param path Path to add
      */
     static void add_python_path(const std::string& path);
@@ -46,17 +42,6 @@ public:
      * @return Python module object
      */
     static py::object import_module(const std::string& module_name);
-
-    /**
-     * @brief Call a Python function with no arguments
-     * @param module_name Module name
-     * @param function_name Function name
-     * @return Python object result
-     */
-    static py::object call_function(
-        const std::string& module_name,
-        const std::string& function_name
-    );
 
     /**
      * @brief Call a Python function with arguments

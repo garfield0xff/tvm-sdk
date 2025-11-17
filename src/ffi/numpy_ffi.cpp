@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 namespace tvm_sdk {
-namespace ffi {d
+namespace ffi {
 
 py::array NumPyFFI::add_arrays(const py::array& a, const py::array& b) {
     py::object result = PythonHook::call_function(MODULE_NAME, "add_arrays", a, b);
