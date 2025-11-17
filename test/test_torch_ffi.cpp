@@ -128,6 +128,7 @@ TEST_F(TorchFFITest, PredictDogImage) {
             // Extract top-1 prediction
             std::string top1_class = py::cast<std::string>(dict_result["top1_class"]);
             double top1_prob = py::cast<double>(dict_result["top1_probability"]);
+            std::string device = py::cast<std::string>(dict_result["device"]);
 
             // Extract inference timing info
             std::string avg_time = py::cast<std::string>(dict_result["avg_inference_time_ms"]);
@@ -138,10 +139,11 @@ TEST_F(TorchFFITest, PredictDogImage) {
 
             std::cout << "\n=== Inference Results ===\n";
             std::cout << "Image: " << image_path << "\n";
+            std::cout << "Device: " << device << "\n";
             std::cout << "Top-1 Class: " << top1_class << "\n";
             std::cout << "Top-1 Probability: " << std::fixed << std::setprecision(4) << (top1_prob * 100) << "%\n";
 
-            std::cout << "\n=== Inference Time (PyTorch) ===\n";
+            std::cout << "\n=== Inference Time (PyTorch on " << device << ") ===\n";
             std::cout << "Iterations: " << num_iterations << "\n";
             std::cout << "Average: " << avg_time << " ms\n";
             std::cout << "Std Dev: " << std_time << " ms\n";

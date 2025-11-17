@@ -174,9 +174,12 @@ def tune_resnet18_with_metaschedule(
                     mod=relax_mod,
                     target=target,
                     work_dir=work_dir,
+                    max_trials_per_task=200,        # 각 task당 최대 200 trials
+                    num_trials_per_iter=64,         # 반복당 64 trials -> batch size
                     max_trials_global=num_trials,
                     builder=builder,
                     num_tuning_cores=max_workers,
+                    post_optimization=True,         # 후처리 최적화 활성화
                 )
 
             # Apply tuning database

@@ -209,9 +209,15 @@ def predict_image(image_path):
         import time
         import numpy as np
 
+        # Set device (CUDA if available, otherwise CPU)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         # Load model and preprocess image
         model = load_resnet18(pretrained=True)
+        model = model.to(device)  # Move model to device
+
         input_batch = preprocess_image(image_path)
+        input_batch = input_batch.to(device)  # Move input to device
 
         # Warmup (5 iterations)
         with torch.no_grad():
@@ -257,6 +263,7 @@ def predict_image(image_path):
         return {
             'status': 'success',
             'image_path': image_path,
+            'device': str(device),
             'top1_class': categories[top5_catid[0]],
             'top1_probability': float(top5_prob[0]),
             'top5_predictions': predictions,
